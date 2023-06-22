@@ -3,7 +3,7 @@
     {
       "content": "테스트 1",
       "completed": false,
-      "recommended": false,
+      "recommended": true,
       "id": 1
     },
     {
