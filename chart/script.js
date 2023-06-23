@@ -11,6 +11,7 @@
       this.canvas.height = height;
       this.ctx = this.canvas.getContext('2d');
       this.legends = document.createElement('div');
+      this.legends.classList.add('legends');
       this.parent.appendChild(this.canvas);
       this.parent.appendChild(this.legends);
       this.label = '';
@@ -24,6 +25,20 @@
       for (const [data, value] of this.datas) {
         this.total += value;
       }
+    };
+
+    drawLegends = () => {
+      let index = 0;
+      for (const [instruments, value] of this.datas) {
+        this.label +=
+          "<span style='background-color:" +
+          this.colors[index] +
+          "'>" +
+          instruments +
+          '</span>';
+        index++;
+      }
+      this.legends.innerHTML = this.label;
     };
 
     drawCanvas = (centerX, centerY, radius, startAngle, endAngle, color) => {
@@ -67,6 +82,17 @@
         initial += angleValue;
         index++;
       }
+
+      if (donutChart) {
+        this.drawCanvas(
+          centerX,
+          centerY,
+          this.radius / 3.5,
+          0,
+          Math.PI * 2,
+          'white'
+        );
+      }
     };
   }
 
@@ -92,6 +118,7 @@
   const chart = new Chart('.canvas', data, option);
   const { width, height, radius } = option;
   chart.getTotal();
-  // chart.drawlegends();
+  chart.drawLegends();
   chart.drawChart(false, width / 2 - 10 - radius, height / 2, labelOption);
+  chart.drawChart(true, width / 2 + 10 + radius, height / 2, labelOption);
 })();
