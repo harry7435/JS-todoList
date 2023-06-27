@@ -65,6 +65,64 @@
       this.ctx.closePath();
     };
 
+    // 패들 막대기 그리기
+    drawPaddle = () => {
+      this.ctx.beginPath();
+      this.ctx.rect(
+        this.paddleX,
+        this.canvas.height - this.paddleHeight,
+        this.paddleWidth,
+        this.paddleHeight
+      );
+      this.ctx.fillStyle = this.paddleColor;
+      this.ctx.fill();
+      this.ctx.closePath();
+    };
+
+    // 벽돌 그리기
+    drawBricks = () => {
+      let brickX = 0;
+      let brickY = 0;
+      let gradient = this.ctx.createLinearGradient(0, 0, 200, 0);
+      gradient.addColorStop(0, this.brickStartColor);
+      gradient.addColorStop(1, this.brickEndColor);
+
+      for (let colIndex = 0; colIndex < this.brickCol; colIndex++) {
+        for (let rowIndex = 0; rowIndex < this.brickRow; rowIndex++) {
+          if (1 !== this.bricks[colIndex][rowIndex].status) {
+            continue;
+          }
+          brickX =
+            colIndex * (this.brickWidth + this.brickPad) + this.brickPosX;
+          brickY =
+            rowIndex * (this.brickHeight + this.brickPad) + this.brickPosY;
+
+          this.bricks[colIndex][rowIndex].x = brickX;
+          this.bricks[colIndex][rowIndex].y = brickY;
+
+          this.ctx.beginPath();
+          this.ctx.rect(brickX, brickY, this.brickWidth, this.brickHeight);
+          this.ctx.fillStyle = gradient;
+          this.ctx.fill();
+          this.ctx.closePath();
+        }
+      }
+    };
+
+    // 점수 표시
+    drawScore = () => {
+      this.ctx.font = this.fontFamily;
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fillText('점수 : ' + this.score, 10, 22);
+    };
+
+    // 목숨 표시
+    drawLives = () => {
+      this.ctx.font = this.fontFamily;
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fillText('목숨 : ' + this.lives, this.canvas.width - 68, 22);
+    };
+
     draw = () => {
       // 캔버스 초기화
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -76,10 +134,10 @@
       );
 
       this.drawBall();
-      // this.drawPaddle();
-      // this.drawBricks();
-      // this.drawScore();
-      // this.drawLives();
+      this.drawPaddle();
+      this.drawBricks();
+      this.drawScore();
+      this.drawLives();
       // this.detectCollision();
 
       this.ballX += this.directX;
@@ -107,7 +165,7 @@
     brickRow: 3,
     brickCol: 5,
     brickWidth: 75,
-    brickHeight: 70,
+    brickHeight: 20,
     brickPad: 10,
     brickPosX: 30,
     brickPosY: 30,
