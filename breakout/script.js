@@ -19,7 +19,7 @@
       this.bg = data.bg;
       this.radius = 10;
       this.ballX = this.canvas.width / 2;
-      this.ballY = this.canvas.hegith - 30;
+      this.ballY = this.canvas.height - 30;
       this.directX = data.speed;
       this.directY = -data.speed;
       this.paddleWidth = data.paddleWidth;
@@ -27,32 +27,41 @@
       this.rightPressed = false;
       this.leftPressed = false;
       this.paddleX = (this.canvas.width - this.paddleWidth) / 2;
+      this.brickRow = data.brickRow;
       this.brickCol = data.brickCol;
       this.brickWidth = data.brickWidth;
       this.brickHeight = data.brickHeight;
       this.brickPad = data.brickPad;
       this.brickPosX = data.brickPosX;
       this.brickPosY = data.brickPosY;
-      this.ballColor = data.paddleColor;
+      this.ballColor = data.ballColor;
+      this.paddleColor = data.paddleColor;
       this.fontColor = data.fontColor;
       this.brickStartColor = data.brickStartColor;
-      this.brickEndColor = data.brikEndColor;
+      this.brickEndColor = data.brickEndColor;
       this.image.setAttribute('src', this.bg);
-      this.parent.appendchild(this.canvas);
+      this.parent.appendChild(this.canvas);
       this.bricks = [];
     }
 
     init = () => {
       // 벽돌 배열 만들기
-      for (let colIndex = 0; colIndex < this.brickCol.length; colIndex++) {
+      for (let colIndex = 0; colIndex < this.brickCol; colIndex++) {
         this.bricks[colIndex] = [];
-        for (let rowIndex = 0; rowIndex < this.brickRow.length; rowIndex++) {
+        for (let rowIndex = 0; rowIndex < this.brickRow; rowIndex++) {
           this.bricks[colIndex][rowIndex] = { x: 0, y: 0, status: 1 };
         }
       }
-
       // this.keyEvent()
       this.draw();
+    };
+
+    drawBall = () => {
+      this.ctx.beginPath();
+      this.ctx.arc(this.ballX, this.ballY, this.radius, 0, Math.PI * 2);
+      this.ctx.fillStyle = this.ballColor;
+      this.ctx.fill();
+      this.ctx.closePath();
     };
 
     draw = () => {
@@ -66,12 +75,21 @@
       );
 
       this.drawBall();
-      this.drawPaddle();
-      this.drawBricks();
-      this.drawScore();
-      this.drawLives();
-      this.detectCollision();
+      // this.drawPaddle();
+      // this.drawBricks();
+      // this.drawScore();
+      // this.drawLives();
+      // this.detectCollision();
+
+      this.ballX += this.directX;
+      this.ballY += this.directY;
+
+      requestAnimationFrame(this.draw);
     };
+
+    // reset = () => {
+    //   document.location.reload();
+    // };
   }
 
   const data = {
@@ -84,9 +102,9 @@
     paddleColor: '#05aff2',
     fontColor: '#f2bb16',
     brickStartColor: '#f29f05',
-    brikEndColor: '#f21905',
+    brickEndColor: '#f21905',
     brickRow: 3,
-    brinkCol: 5,
+    brickCol: 5,
     brickWidth: 75,
     brickHeight: 70,
     brickPad: 10,
