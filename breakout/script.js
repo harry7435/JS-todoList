@@ -56,6 +56,7 @@
       this.draw();
     };
 
+    // 공 그리기
     drawBall = () => {
       this.ctx.beginPath();
       this.ctx.arc(this.ballX, this.ballY, this.radius, 0, Math.PI * 2);
