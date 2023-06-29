@@ -3,6 +3,10 @@
 
   const get = (element) => document.querySelector(element);
 
+  const keyEvent = (control, func) => {
+    document.addEventListener(control, func, false);
+  };
+
   class BrickBreak {
     constructor(parent = 'body', data = {}) {
       this.parent = get(parent);
@@ -52,8 +56,40 @@
           this.bricks[colIndex][rowIndex] = { x: 0, y: 0, status: 1 };
         }
       }
-      // this.keyEvent()
+      this.keyEvent();
       this.draw();
+    };
+
+    keyupEvent = (event) => {
+      if ('Right' === event.key || 'ArrowRight' === event.key) {
+        this.rightPressed = false;
+      } else if ('Left' === event.key || 'ArrowLeft' === event.key) {
+        this.leftPressed = false;
+      }
+    };
+
+    // 키보드로 패들 조작
+    keydownEvent = (event) => {
+      if ('Right' === event.key || 'ArrowRight' === event.key) {
+        this.rightPressed = true;
+      } else if ('Left' === event.key || 'ArrowLeft' === event.key) {
+        this.leftPressed = true;
+      }
+    };
+
+    // 마우스로 패들 조작
+    mousemoveEvent = (event) => {
+      const positionX = event.clientX - this.canvas.offsetLeft;
+
+      if (0 < positionX && positionX < this.canvas.width) {
+        this.paddleX = positionX - this.paddleWidth / 2;
+      }
+    };
+
+    keyEvent = () => {
+      keyEvent('keyup', this.keyupEvent);
+      keyEvent('keydown', this.keydownEvent);
+      keyEvent('mousemove', this.mousemoveEvent);
     };
 
     // 공 그리기
@@ -140,15 +176,57 @@
       this.drawLives();
       // this.detectCollision();
 
+      // 좌우 벽 설정
+      if (
+        this.ballX + this.directX > this.canvas.width - this.radius ||
+        this.ballX + this.directX < this.radius
+      ) {
+        this.directX = -this.directX;
+      }
+
+      // 위아래 벽 설정
+      if (this.ballY + this.directY < this.radius) {
+        this.directY = -this.directY;
+      } else if (this.ballY + this.directY > this.canvas.height - this.radius) {
+        if (
+          this.ballX > this.paddleX &&
+          this.ballX < this.paddleX + this.paddleWidth
+        ) {
+          this.directY = -this.directY;
+        } else {
+          this.lives--;
+          if (0 === this.lives) {
+            alert('실패하였습니다.');
+            this.reset();
+          } else {
+            this.ballX = this.canvas.width / 2;
+            this.ballY = this.canvas.height - this.paddleHeight;
+            this.directX = this.speed;
+            this.directY = -this.speed;
+            this.paddleX = (this.canvas.width - this.paddleWidth) / 2;
+          }
+        }
+      }
+
+      if (
+        this.rightPressed &&
+        this.paddleX < this.canvas.width - this.paddleWidth
+      ) {
+        this.paddleX += 7;
+      } else if (this.leftPressed && 0 < this.paddleX) {
+        this.paddleX -= 7;
+      }
+
       this.ballX += this.directX;
       this.ballY += this.directY;
 
       requestAnimationFrame(this.draw);
     };
 
-    // reset = () => {
-    //   document.location.reload();
-    // };
+    // 게임 리셋
+    reset = () => {
+      document.location.reload();
+    };
   }
 
   const data = {
