@@ -1,5 +1,5 @@
-;(function () {
-  'use strict'
+(function () {
+  'use strict';
 
   const shops = [
     {
@@ -20,18 +20,25 @@
       lat: 37.40133360873933,
       lng: 127.10801128231743,
     },
-  ]
+  ];
 
   const defaultPos = {
     lat: 37.4020589,
     lng: 127.1064401,
-  }
+  };
 
   const get = (target) => {
-    return document.querySelector(target)
-  }
+    return document.querySelector(target);
+  };
 
-  const init = () => {}
+  const $map = get('#map');
 
-  init()
-})()
+  const mapContainer = new kakao.maps.Map($map, {
+    center: new kakao.maps.LatLng(defaultPos.lat, defaultPos.lng),
+    level: 3,
+  });
+
+  const init = () => {};
+
+  init();
+})();
