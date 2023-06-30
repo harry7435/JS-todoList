@@ -159,6 +159,38 @@
       this.ctx.fillText('목숨 : ' + this.lives, this.canvas.width - 68, 22);
     };
 
+    // 벽돌 충돌 감지
+    detectCollision = () => {
+      let currentBrick = {};
+
+      for (let colIndex = 0; colIndex < this.brickCol; colIndex++) {
+        for (let rowIndex = 0; rowIndex < this.brickRow; rowIndex++) {
+          currentBrick = this.bricks[colIndex][rowIndex];
+
+          if (1 !== currentBrick.status) {
+            continue;
+          }
+
+          if (
+            this.ballX > currentBrick.x &&
+            this.ballX < currentBrick.x + this.brickWidth &&
+            this.ballY > currentBrick.y &&
+            this.ballY < currentBrick.y + this.brickHeight
+          ) {
+            this.directY = -this.directY;
+            currentBrick.status = 0;
+            this.score++;
+          }
+
+          if (this.score !== this.brickCol * this.brickRow) {
+            continue;
+          }
+          alert('승리했습니다.');
+          this.reset();
+        }
+      }
+    };
+
     draw = () => {
       // 캔버스 초기화
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -174,7 +206,7 @@
       this.drawBricks();
       this.drawScore();
       this.drawLives();
-      // this.detectCollision();
+      this.detectCollision();
 
       // 좌우 벽 설정
       if (
