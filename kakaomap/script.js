@@ -33,12 +33,46 @@
 
   const $map = get('#map');
 
+  // 지도컨테이너 생성 함수
   const mapContainer = new kakao.maps.Map($map, {
     center: new kakao.maps.LatLng(defaultPos.lat, defaultPos.lng),
     level: 3,
   });
 
-  const init = () => {};
+  // 마커 이미지 생성 함수
+  const createMarkerImage = () => {
+    const markerImageSrc = 'assets/marker.png';
+    const imageSize = new kakao.maps.Size(30, 46);
+    return new kakao.maps.MarkerImage(markerImageSrc, imageSize);
+  };
+
+  // 마커 생성 함수
+  const createMarker = (lat, lng) => {
+    const marker = new kakao.maps.Marker({
+      map: mapContainer,
+      position: new kakao.maps.LatLng(lat, lng),
+      image: createMarkerImage(),
+    });
+    return marker;
+  };
+
+  //  상점 정보 생성 함수
+  const createShopElement = () => {
+    shops.map((shop) => {
+      const { lat, lng } = shop;
+      const marker = createMarker(lat, lng);
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `<div style="width:150px;text-align:center;padding:6px 2px;">
+                  <a href="https://place.map.kakao.com/${shop.id}" target="_blank">${shop.name}</a>
+                </div>`,
+      });
+      infowindow.open(mapContainer, marker);
+    });
+  };
+
+  const init = () => {
+    createShopElement();
+  };
 
   init();
 })();
