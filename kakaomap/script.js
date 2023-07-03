@@ -32,6 +32,7 @@
   };
 
   const $map = get('#map');
+  const $geoLocationButton = get('.geolocation_button');
 
   // 지도컨테이너 생성 함수
   const mapContainer = new kakao.maps.Map($map, {
@@ -70,7 +71,45 @@
     });
   };
 
+  // 위치 불러오기 성공 함수
+  const successGeolocation = (positon) => {
+    const { latitude, longitude } = positon.coords;
+    mapContainer.setCenter(new kakao.maps.LatLng(latitude, longitude));
+
+    // 마커 표시
+    const marker = createMarker(latitude, longitude);
+    marker.setMap(mapContainer);
+  };
+
+  // 위치 불러오기 에러 함수
+  const errorGeolocation = (error) => {
+    if (error.code === 1) {
+      alert('위치 정보를 허용해주세요');
+    } else if (error.code === 2) {
+      alert('사용할 수 없는 위치입니다.');
+    } else if (error.code === 3) {
+      alert('타임아웃이 발생했습니다.');
+    } else {
+      alert('오류가 발생했습니다.');
+    }
+  };
+
+  // 현재 위치 가져오는 함수
+  const getLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        successGeolocation,
+        errorGeolocation
+      );
+    } else {
+      alert('지도 api 사용 불가');
+    }
+  };
+
   const init = () => {
+    $geoLocationButton.addEventListener('click', () => {
+      getLocation();
+    });
     createShopElement();
   };
 
