@@ -23,6 +23,7 @@
       this.sourceX;
       this.sourceY;
       this.sourceWidth;
+      this.sourceHeight;
       this.img = new Image();
       this.btnFlip = get('.btn_flip');
       this.btnSepia = get('.btn_sepia');
@@ -46,6 +47,7 @@
 
     download() {}
 
+    // 파일 업로드 메서드
     fileEvent() {
       this.fileInput.addEventListener('change', (event) => {
         const fileName = URL.createObjectURL(event.target.files[0]);
@@ -61,9 +63,83 @@
       });
     }
 
-    drawEvent() {}
+    // 이미지 드래그 추출 메서드
+    drawEvent() {
+      const canvasX = this.canvas.getBoundingClientRect().left;
+      const canvasY = this.canvas.getBoundingClientRect().top;
+      let sX, sY, eX, eY;
+      let drawStart = false;
 
-    drawOutput() {}
+      // 마우스를 눌렀을 때
+      this.canvas.addEventListener('mousedown', (e) => {
+        sX = parseInt(e.clientX - canvasX, 10);
+        sY = parseInt(e.clientY - canvasY, 10);
+        drawStart = true;
+      });
+
+      // 마우스를 움직일 때
+      this.canvas.addEventListener('mousemove', (e) => {
+        if (!drawStart) return;
+        eX = parseInt(e.clientX - canvasX, 10);
+        eY = parseInt(e.clientY - canvasY, 10);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.strokeRect(sX, sY, eX - sX, eY - sY);
+      });
+
+      // 마우스를 떼었을 때
+      this.canvas.addEventListener('mouseup', () => {
+        drawStart = false;
+
+        // 최소 사이즈보다 작으면 무시
+        if (
+          Math.abs(eX - sX) < this.minSize ||
+          Math.abs(eY - sY) < this.minSize
+        ) {
+          return;
+        }
+
+        this.drawOutput(sX, sY, eX - sX, eY - sY);
+      });
+    }
+
+    // 추출한 이미지 그리는 메서드
+    drawOutput(x, y, width, height) {
+      this.targetImage.innerHTML = '';
+
+      // 가로 세로 비율 조정
+      if (Math.abs(width) <= Math.abs(height)) {
+        this.targetHeight = this.height;
+        this.targetWidth = (this.targetHeight * width) / height;
+      } else {
+        this.targetWidth = this.width;
+        this.targetHeight = (this.targetWidth * height) / width;
+      }
+
+      this.targetCanvas.width = this.targetWidth;
+      this.targetCanvas.height = this.targetHeight;
+
+      this.img.addEventListener('load', () => {
+        const buffer = this.img.width / this.width;
+        this.sourceX = x * buffer;
+        this.sourceY = y * buffer;
+        this.sourceWidth = width * buffer;
+        this.sourceHeight = height * buffer;
+        this.targetCtx.drawImage(
+          this.img,
+          this.sourceX,
+          this.sourceY,
+          this.sourceWidth,
+          this.sourceHeight,
+          0,
+          0,
+          this.targetWidth,
+          this.targetHeight
+        );
+      });
+
+      this.img.src = this.fileImage.getAttribute('src');
+      this.targetImage.appendChild(this.targetCanvas);
+    }
   }
 
   new PhotoEditor();
