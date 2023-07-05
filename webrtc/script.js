@@ -103,11 +103,10 @@
       downloader.setAttribute('download', 'test_video.webm');
       this.container.appendChild(downloader);
       downloader.click();
-      // 다운로드 영상 임시 파일 삭제
       setTimeout(() => {
         this.container.removeChild(downloader);
         window.URL.revokeObjectURL(url);
-      }, 100);
+      });
     }
   }
 
