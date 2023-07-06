@@ -37,13 +37,64 @@
       this.drawEvent();
     }
 
-    clickEvent() {}
+    // 버튼 클릭 메서드
+    clickEvent() {
+      this.btnFlip.addEventListener('click', this.flipEvent.bind(this));
+      this.btnSepia.addEventListener('click', this.sepiaEvent.bind(this));
+      this.btnGray.addEventListener('click', this.grayEvent.bind(this));
+      this.btnSave.addEventListener('click', this.download.bind(this));
+    }
 
-    fileEvent() {}
+    // 플립(좌우반전) 이벤트 메서드
+    flipEvent() {
+      this.targetCtx.translate(this.targetWidth, 0);
+      this.targetCtx.scale(-1, 1);
+      this.targetCtx.drawImage(
+        this.img,
+        this.sourceX,
+        this.sourceY,
+        this.sourceWidth,
+        this.sourceHeight,
+        0,
+        0,
+        this.targetWidth,
+        this.targetHeight
+      );
+    }
 
-    sepiaEvent() {}
+    // 세피아 이벤트 메서드
+    sepiaEvent() {
+      this.targetCtx.clearRect(0, 0, this.targetWidth, this.targetHeight);
+      this.targetCtx.filter = 'sepia(1)';
+      this.targetCtx.drawImage(
+        this.img,
+        this.sourceX,
+        this.sourceY,
+        this.sourceWidth,
+        this.sourceHeight,
+        0,
+        0,
+        this.targetWidth,
+        this.targetHeight
+      );
+    }
 
-    grayEvent() {}
+    // 그레이 이벤트 메서드
+    grayEvent() {
+      this.targetCtx.clearRect(0, 0, this.targetWidth, this.targetHeight);
+      this.targetCtx.filter = 'grayscale(1)';
+      this.targetCtx.drawImage(
+        this.img,
+        this.sourceX,
+        this.sourceY,
+        this.sourceWidth,
+        this.sourceHeight,
+        0,
+        0,
+        this.targetWidth,
+        this.targetHeight
+      );
+    }
 
     download() {}
 
