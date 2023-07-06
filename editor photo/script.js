@@ -96,7 +96,20 @@
       );
     }
 
-    download() {}
+    // 사진 저장 메서드
+    download() {
+      const url = this.targetCanvas.toDataURL();
+      const downloader = document.createElement('a');
+
+      downloader.style.display = 'none';
+      downloader.setAttribute('href', url);
+      downloader.setAttribute('download', 'canvas.png');
+      this.container.appendChild(downloader);
+      downloader.click();
+      setTimeout(() => {
+        this.container.removeChild(downloader);
+      }, 100);
+    }
 
     // 파일 업로드 메서드
     fileEvent() {
